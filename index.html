@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Setoran Orderan Sh</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Montserrat:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        body {
+            background-color: #0a0a0a;
+            color: #e5e5e5;
+            font-family: 'Montserrat', sans-serif;
+        }
+        .graduasi-title {
+            font-family: 'Cinzel', serif;
+            color: #d4af37; /* Gold accent */
+        }
+        .card-dark {
+            background: linear-gradient(145deg, #1a1a1a, #0d0d0d);
+            border: 1px solid #333;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+        .btn-gold {
+            background: linear-gradient(45deg, #af8d23, #d4af37);
+            color: #000;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        .btn-gold:hover {
+            background: linear-gradient(45deg, #d4af37, #f1d592);
+            transform: translateY(-2px);
+        }
+        input, select, textarea {
+            background-color: #121212 !important;
+            border: 1px solid #444 !important;
+            color: white !important;
+        }
+        input:focus {
+            border-color: #d4af37 !important;
+            ring: 1px #d4af37;
+        }
+        .order-item {
+            border-left: 4px solid #d4af37;
+        }
+    </style>
+</head>
+<body class="p-4 md:p-8">
+    <div class="max-w-4xl mx-auto">
+        <!-- Header -->
+        <header class="text-center mb-10">
+            <h1 class="text-4xl md:text-6xl graduasi-title mb-2">SETORAN ORDERAN</h1>
+            <p class="text-gray-400 italic">"Merayakan setiap momen, mengabadikan setiap kenangan."</p>
+            <div class="w-24 h-1 bg-[#d4af37] mx-auto mt-4"></div>
+        </header>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <!-- Form Input -->
+            <section class="card-dark p-6 rounded-xl">
+                <h2 class="text-xl font-semibold mb-6 flex items-center gap-2">
+                    <span class="text-[#d4af37]">✦</span> Form Pemesanan
+                </h2>
+
+                <div class="space-y-4">
+                    <!-- Pilihan Show -->
+                    <div>
+                        <label class="block text-sm font-medium mb-1">Pilih Show</label>
+                        <select id="showSelect" class="w-full p-3 rounded-lg">
+                            <option value="">-- Pilih Show --</option>
+                            <option value="Cara Meminum Ramune">Cara Meminum Ramune</option>
+                            <option value="Pertaruhan Cinta">Pertaruhan Cinta</option>
+                            <option value="Te Wo Tsunaginagara">Te Wo Tsunaginagara</option>
+                            <option value="Pajama Drive">Pajama Drive</option>
+                            <option value="CUSTOM">-- Isi Sendiri (Alternatif) --</option>
+                        </select>
+                    </div>
+
+                    <!-- Custom Show Input -->
+                    <div id="customShowContainer" class="hidden">
+                        <label class="block text-sm font-medium mb-1">Nama Show Kustom</label>
+                        <input type="text" id="customShowName" placeholder="Masukkan nama show..." class="w-full p-3 rounded-lg">
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-4">
+                        <!-- Tanggal (Hanya Angka) -->
+                        <div>
+                            <label class="block text-sm font-medium mb-1">Tanggal (1-31)</label>
+                            <input type="number" id="orderDate" min="1" max="31" placeholder="Contoh: 15" class="w-full p-3 rounded-lg">
+                        </div>
+                        <!-- Jumlah -->
+                        <div>
+                            <label class="block text-sm font-medium mb-1">Jumlah</label>
+                            <input type="number" id="orderQty" min="1" value="1" class="w-full p-3 rounded-lg">
+                        </div>
+                    </div>
+
+                    <!-- Kriteria Show -->
+                    <div>
+                        <label class="block text-sm font-medium mb-1">Kriteria & Harga</label>
+                        <select id="kriteriaSelect" class="w-full p-3 rounded-lg">
+                            <option value="5000">Reguler (5.000)</option>
+                            <option value="6000">STS / Spesial (6.000)</option>
+                            <option value="8000">Khusus (8.000)</option>
+                            <option value="10000">Anniversary (10.000)</option>
+                        </select>
+                    </div>
+
+                    <button onclick="addOrder()" class="btn-gold w-full py-3 rounded-lg mt-4 shadow-lg">
+                        TAMBAHKAN KE LIST
+                    </button>
+                </div>
+            </section>
+
+            <!-- List Orderan -->
+            <section class="card-dark p-6 rounded-xl">
+                <h2 class="text-xl font-semibold mb-6 flex items-center gap-2">
+                    <span class="text-[#d4af37]">✦</span> Ringkasan Pesanan
+                </h2>
+                
+                <div id="orderList" class="space-y-3 max-h-[400px] overflow-y-auto mb-6">
+                    <p class="text-gray-500 text-center italic mt-10">Belum ada orderan ditambahkan.</p>
+                </div>
+
+                <div class="border-t border-gray-700 pt-4">
+                    <div class="flex justify-between text-lg font-bold">
+                        <span>TOTAL TAGIHAN:</span>
+                        <span id="totalDisplay" class="text-[#d4af37]">Rp 0</span>
+                    </div>
+                    <button onclick="sendToWhatsApp()" class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 rounded-lg mt-6 flex items-center justify-center gap-2 transition-colors">
+                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.588-5.946 0-6.556 5.332-11.888 11.888-11.888 3.176 0 6.161 1.237 8.404 3.48s3.481 5.229 3.481 8.404c0 6.556-5.332 11.892-11.888 11.892-1.979 0-3.917-.492-5.644-1.43l-6.34 1.651zm6.373-3.313l.369.219c1.472.873 3.173 1.335 4.912 1.335 5.307 0 9.626-4.321 9.626-9.626 0-2.571-1.001-4.987-2.82-6.806s-4.235-2.82-6.806-2.82c-5.307 0-9.626 4.321-9.626 9.626 0 1.834.521 3.619 1.506 5.166l.243.383-1.003 3.666 3.763-.98zm9.915-7.114c-.29-.145-1.714-.848-1.98-.944-.266-.096-.459-.145-.652.145-.193.29-.748.944-.917 1.138-.169.193-.338.217-.628.072-.29-.145-1.225-.451-2.333-1.44-.863-.769-1.445-1.718-1.614-2.008-.169-.29-.018-.447.127-.591.13-.13.29-.338.435-.507.145-.169.193-.29.29-.483.096-.193.048-.362-.024-.507-.072-.145-.652-1.571-.894-2.152-.235-.565-.475-.489-.652-.498-.169-.008-.362-.01-.555-.01s-.507.072-.773.362c-.266.29-1.015.992-1.015 2.418 0 1.426 1.039 2.804 1.184 2.997.145.193 2.044 3.122 4.952 4.379.692.299 1.232.478 1.652.612.695.221 1.328.19 1.829.115.557-.084 1.714-.7 1.956-1.378.242-.677.242-1.257.17-1.378-.073-.121-.266-.193-.556-.338z"/></svg>
+                        KIRIM KE WHATSAPP
+                    </button>
+                </div>
+            </section>
+        </div>
+
+        <!-- Footer -->
+        <footer class="mt-12 text-center text-gray-500 text-sm">
+            <p>&copy; 2024 Setoran Orderan. All Rights Reserved.</p>
+        </footer>
+    </div>
+
+    <script>
+        let orders = [];
+
+        // Handle custom show selection
+        document.getElementById('showSelect').addEventListener('change', function() {
+            const customContainer = document.getElementById('customShowContainer');
+            if (this.value === 'CUSTOM') {
+                customContainer.classList.remove('hidden');
+            } else {
+                customContainer.classList.add('hidden');
+            }
+        });
+
+        function addOrder() {
+            const showSelect = document.getElementById('showSelect');
+            let showName = showSelect.value;
+            
+            if (showName === 'CUSTOM') {
+                showName = document.getElementById('customShowName').value;
+            }
+
+            const date = document.getElementById('orderDate').value;
+            const qty = parseInt(document.getElementById('orderQty').value);
+            const price = parseInt(document.getElementById('kriteriaSelect').value);
+            const kriteriaText = document.getElementById('kriteriaSelect').options[document.getElementById('kriteriaSelect').selectedIndex].text.split(' (')[0];
+
+            if (!showName || !date || isNaN(qty) || qty <= 0) {
+                alert("Mohon isi semua data dengan benar!");
+                return;
+            }
+
+            orders.push({
+                name: showName,
+                date: date,
+                qty: qty,
+                price: price,
+                kriteria: kriteriaText
+            });
+
+            renderOrders();
+            // Reset fields
+            document.getElementById('orderDate').value = "";
+            document.getElementById('orderQty').value = "1";
+        }
+
+        function removeOrder(index) {
+            orders.splice(index, 1);
+            renderOrders();
+        }
+
+        function renderOrders() {
+            const listContainer = document.getElementById('orderList');
+            const totalDisplay = document.getElementById('totalDisplay');
+            
+            if (orders.length === 0) {
+                listContainer.innerHTML = '<p class="text-gray-500 text-center italic mt-10">Belum ada orderan ditambahkan.</p>';
+                totalDisplay.innerText = "Rp 0";
+                return;
+            }
+
+            listContainer.innerHTML = "";
+            let total = 0;
+
+            orders.forEach((order, index) => {
+                const subtotal = order.price * order.qty;
+                total += subtotal;
+
+                const div = document.createElement('div');
+                div.className = "order-item bg-[#1a1a1a] p-3 rounded-r-lg flex justify-between items-center group";
+                div.innerHTML = `
+                    <div>
+                        <p class="font-bold text-[#d4af37]">${order.name}</p>
+                        <p class="text-xs text-gray-400">Tgl: ${order.date} | Jml: ${order.qty} | ${order.kriteria}</p>
+                    </div>
+                    <div class="text-right flex items-center gap-3">
+                        <span class="text-sm font-semibold">Rp ${subtotal.toLocaleString()}</span>
+                        <button onclick="removeOrder(${index})" class="text-red-500 opacity-0 group-hover:opacity-100 transition-opacity">
+                            ✕
+                        </button>
+                    </div>
+                `;
+                listContainer.appendChild(div);
+            });
+
+            totalDisplay.innerText = "Rp " + total.toLocaleString();
+        }
+
+        function sendToWhatsApp() {
+            if (orders.length === 0) {
+                alert("Tambahkan minimal satu orderan!");
+                return;
+            }
+
+            // Grouping logic by Show Name
+            // If name is same, combine dates
+            const grouped = {};
+            let grandTotal = 0;
+
+            orders.forEach(item => {
+                if (!grouped[item.name]) {
+                    grouped[item.name] = {
+                        dates: [],
+                        totalQty: 0,
+                        kriteria: item.kriteria,
+                        price: item.price
+                    };
+                }
+                grouped[item.name].dates.push(item.date);
+                grouped[item.name].totalQty += item.qty;
+                grandTotal += (item.price * item.qty);
+            });
+
+            // Sorting by show name
+            const sortedNames = Object.keys(grouped).sort();
+
+            let message = "*KONFIRMASI SETORAN ORDERAN*\n";
+            message += "----------------------------------\n\n";
+            message += "Halo @+62 888-0904-8431,\n";
+            message += "Berikut rincian orderan show saya:\n\n";
+
+            sortedNames.forEach(name => {
+                const data = grouped[name];
+                const dateString = data.dates.join(", ");
+                message += `🎭 *Show:* ${name}\n`;
+                message += `📅 *Tanggal:* ${dateString}\n`;
+                message += `🔢 *Jumlah:* ${data.totalQty}\n`;
+                message += `🏷️ *Kriteria:* ${data.kriteria}\n`;
+                message += `----------------------------------\n`;
+            });
+
+            message += `\n💰 *TOTAL TAGIHAN: Rp ${grandTotal.toLocaleString()}*\n\n`;
+            message += "Mohon segera diproses, terima kasih! 🙏";
+
+            const encodedMessage = encodeURIComponent(message);
+            const whatsappUrl = `https://wa.me/6288809048431?text=${encodedMessage}`;
+            
+            // Note: Since this should go to a specific group but tag a number, 
+            // the most reliable way to handle the "tagging" is by sending it to the group 
+            // with the @number syntax or directly to the person. 
+            // We'll open the direct chat with the message formatted for the group.
+            
+            window.open(whatsappUrl, 'https://chat.whatsapp.com/LWuZRg24VnZIrNBEYmcsUX');
+        }
+    </script>
+</body>
+</html>
+
