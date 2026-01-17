@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Setoran Orderan</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            background-color: #0a0a0a;
+            color: #e5e5e5;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        .grad-gold {
+            background: linear-gradient(45deg, #c5a059, #f9e2af);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .card {
+            background: #1a1a1a;
+            border: 1px solid #333;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+        }
+        .btn-primary {
+            background: linear-gradient(45deg, #c5a059, #8e6d2f);
+            transition: all 0.3s ease;
+        }
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(197, 160, 89, 0.4);
+        }
+        input, select, textarea {
+            background: #262626 !important;
+            border: 1px solid #444 !important;
+            color: white !important;
+            border-radius: 8px !important;
+        }
+        .list-item {
+            border-left: 4px solid #c5a059;
+            background: #222;
+        }
+    </style>
+</head>
+<body class="min-h-screen p-4 md:p-8">
+
+    <div class="max-w-4xl mx-auto">
+        <!-- Header -->
+        <header class="text-center mb-10">
+            <h1 class="text-4xl font-bold grad-gold mb-2">SETORAN ORDERAN</h1>
+            <p class="text-gray-400 italic">REALTIME48</p>
+        </header>
+
+        <!-- Panduan Penggunaan -->
+        <section class="card p-6 mb-8">
+            <h2 class="text-xl font-semibold mb-4 text-yellow-500">🎓 Tata Cara Penggunaan (No.4 Paling Penting!!!)</h2>
+            <ul class="space-y-2 text-sm text-gray-300">
+                <li>1. Pilih nama show dari daftar yang tersedia atau isi kolom alternatif (jika tidak bisa memasukkan data lebih dari 1).</li>
+                <li>2. Masukkan <strong>Tanggal</strong> (misal: 15) dan <strong>Jumlah Orderan</strong>.</li>
+                <li>3. Pilih <strong>Kriteria Show</strong> untuk menentukan harga per item.</li>
+                <li>4. Klik tombol <strong>"Tambah ke Daftar"</strong>. Anda bisa menambah banyak data sekaligus! dengan cara mengisi kembali nama show, tanggal, serta jumlah orderan dan klik <strong>"Tambah Ke Daftar"</strong> </li>
+                <li>5. Setelah semua pesanan masuk ke daftar bawah, klik <strong>"Kirim via WhatsApp"</strong> untuk konfirmasi.</li>
+            </ul>
+        </section>
+
+        <!-- Form Input -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+            <div class="card p-6">
+                <h3 class="text-lg font-medium mb-4 grad-gold">Input Orderan</h3>
+                
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm mb-1">Pilih Show</label>
+                        <select id="showSelect" class="w-full p-2">
+                            <option value="">-- Pilih Show --</option>
+                            <option value="Cara Meminum Ramune">Cara Meminum Ramune</option>
+                            <option value="Pertaruhan Cinta">Pertaruhan Cinta</option>
+                            <option value="Te Wo Tsunaginagara">Te Wo Tsunaginagara</option>
+                            <option value="Pajama Drive">Pajama Drive</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm mb-1">Alternatif (Isi jika ingin order lebih dari 1 show)</label>
+                        <input type="text" id="showAlt" placeholder="Tulis nama show..." class="w-full p-2">
+                    </div>
+
+                    <div class="flex gap-4">
+                        <div class="flex-1">
+                            <label class="block text-sm mb-1">Tanggal (Angka)</label>
+                            <input type="number" id="showDate" min="1" max="31" placeholder="Tgl" class="w-full p-2">
+                        </div>
+                        <div class="flex-1">
+                            <label class="block text-sm mb-1">Jumlah</label>
+                            <input type="number" id="showQty" min="1" placeholder="Qty" class="w-full p-2">
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm mb-1">Kriteria Show</label>
+                        <select id="showType" class="w-full p-2">
+                            <option value="5000">Show Reguler (5.000)</option>
+                            <option value="6000">Show STS/Spesial (6.000)</option>
+                            <option value="8000">Show Khusus (8.000)</option>
+                            <option value="10000">Show Aniv (10.000)</option>
+                        </select>
+                    </div>
+
+                    <button onclick="addToOrder()" class="w-full btn-primary text-black font-bold py-3 rounded-lg mt-4">
+                        + Tambah ke Daftar
+                    </button>
+                </div>
+            </div>
+
+            <!-- Daftar Orderan (Live Preview) -->
+            <div class="card p-6 flex flex-col">
+                <h3 class="text-lg font-medium mb-4 grad-gold">Daftar Orderan Saat Ini</h3>
+                <div id="orderList" class="flex-1 space-y-3 overflow-y-auto max-h-[300px] mb-4 pr-2">
+                    <!-- Item orderan akan muncul di sini -->
+                    <p class="text-gray-500 text-center italic mt-10">Belum ada orderan ditambahkan.</p>
+                </div>
+                
+                <div class="border-t border-gray-700 pt-4">
+                    <div class="flex justify-between items-center mb-4">
+                        <span class="text-gray-400">Total Pembayaran:</span>
+                        <span id="totalPrice" class="text-2xl font-bold text-yellow-500">Rp 0</span>
+                    </div>
+                    <button onclick="sendToWhatsApp()" class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 rounded-lg flex items-center justify-center gap-2">
+                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.588-5.946 0-6.556 5.332-11.888 11.888-11.888 3.176 0 6.161 1.237 8.404 3.48s3.481 5.229 3.481 8.409c0 6.556-5.332 11.888-11.888 11.888-2.003 0-3.963-.505-5.704-1.467l-6.38 1.671zm6.337-4.143c1.551.921 3.235 1.408 4.963 1.408 5.259 0 9.537-4.278 9.537-9.537s-4.278-9.537-9.537-9.537c-2.547 0-4.941 1.008-6.743 2.81s-2.81 4.195-2.81 6.741c0 1.77.476 3.498 1.378 5.018l-.946 3.453 3.538-.928zM17.367 14.39c-.295-.147-1.745-.861-2.016-.959-.271-.098-.469-.147-.667.147-.197.295-.764.959-.936 1.155-.172.197-.344.221-.64.074s-1.246-.459-2.375-1.466c-.878-.782-1.47-1.748-1.643-2.043-.172-.295-.018-.454.13-.601.133-.132.295-.344.443-.517.147-.172.197-.295.295-.492.098-.197.049-.369-.025-.517s-.667-1.648-.912-2.238c-.238-.574-.479-.496-.667-.506-.172-.008-.369-.01-.566-.01s-.517.074-.787.369c-.271.295-1.034 1.008-1.034 2.459s1.058 2.853 1.206 3.05c.147.197 2.081 3.178 5.042 4.461.705.305 1.254.487 1.682.623.707.225 1.35.193 1.859.117.568-.085 1.745-.713 1.991-1.402.246-.688.246-1.278.172-1.402-.074-.123-.271-.197-.566-.344z"/></svg>
+                        Kirim via WhatsApp
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let orders = [];
+
+        function addToOrder() {
+            const showSelect = document.getElementById('showSelect').value;
+            const showAlt = document.getElementById('showAlt').value;
+            const date = document.getElementById('showDate').value;
+            const qty = parseInt(document.getElementById('showQty').value);
+            const price = parseInt(document.getElementById('showType').value);
+            const typeText = document.getElementById('showType').options[document.getElementById('showType').selectedIndex].text.split(' (')[0];
+
+            const showName = showAlt || showSelect;
+
+            if (!showName || !date || isNaN(qty) || qty <= 0) {
+                alert("Mohon lengkapi semua data orderan!");
+                return;
+            }
+
+            orders.push({
+                name: showName,
+                date: parseInt(date),
+                qty: qty,
+                price: price,
+                type: typeText
+            });
+
+            // Reset Input
+            document.getElementById('showDate').value = "";
+            document.getElementById('showQty').value = "";
+            document.getElementById('showAlt').value = "";
+
+            renderOrders();
+        }
+
+        function removeOrder(index) {
+            orders.splice(index, 1);
+            renderOrders();
+        }
+
+        function renderOrders() {
+            const listDiv = document.getElementById('orderList');
+            const totalDiv = document.getElementById('totalPrice');
+            
+            if (orders.length === 0) {
+                listDiv.innerHTML = '<p class="text-gray-500 text-center italic mt-10">Belum ada orderan ditambahkan.</p>';
+                totalDiv.innerText = "Rp 0";
+                return;
+            }
+
+            // Sort by Name, then Date, then Qty
+            orders.sort((a, b) => {
+                if (a.name < b.name) return -1;
+                if (a.name > b.name) return 1;
+                if (a.date < b.date) return -1;
+                if (a.date > b.date) return 1;
+                return a.qty - b.qty;
+            });
+
+            let html = "";
+            let total = 0;
+
+            orders.forEach((order, index) => {
+                total += (order.price * order.qty);
+                html += `
+                    <div class="list-item p-3 flex justify-between items-center rounded-r">
+                        <div>
+                            <div class="font-bold text-yellow-500">${order.name}</div>
+                            <div class="text-xs text-gray-400">Tgl: ${order.date} | Qty: ${order.qty} | ${order.type}</div>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <span class="text-sm font-semibold">Rp ${(order.price * order.qty).toLocaleString()}</span>
+                            <button onclick="removeOrder(${index})" class="text-red-500 hover:text-red-400">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                            </button>
+                        </div>
+                    </div>
+                `;
+            });
+
+            listDiv.innerHTML = html;
+            totalDiv.innerText = `Rp ${total.toLocaleString()}`;
+        }
+
+        function sendToWhatsApp() {
+            if (orders.length === 0) {
+                alert("Daftar orderan masih kosong!");
+                return;
+            }
+
+            // Grouping by Show Name
+            const grouped = {};
+            let grandTotal = 0;
+
+            orders.forEach(order => {
+                if (!grouped[order.name]) {
+                    grouped[order.name] = [];
+                }
+                grouped[order.name].push({
+                    date: order.date,
+                    qty: order.qty,
+                    subtotal: order.price * order.qty
+                });
+                grandTotal += (order.price * order.qty);
+            });
+
+            // Format Message
+            let message = "*KONFIRMASI SETORAN ORDERAN*\n";
+            message += "--------------------------------------\n\n";
+
+            for (const showName in grouped) {
+                message += `*Show:* ${showName}\n`;
+                const dateStrings = grouped[showName].map(item => `   - Tgl ${item.date} (${item.qty} pcs)`);
+                message += dateStrings.join("\n") + "\n\n";
+            }
+
+            message += `*Total Keseluruhan:* Rp ${grandTotal.toLocaleString()}\n\n`;
+            message += "cc: @+62 888-0904-8431\n";
+            message += "Mohon diproses, terima kasih! 🙏";
+
+            const encodedMessage = encodeURIComponent(message);
+            const waUrl = `https://wa.me/6288809048431?text=${encodedMessage}`;
+            
+            // Mencoba membuka WhatsApp, grup diletakkan di akhir sebagai info tambahan jika user ingin mencari manual
+            window.open(waUrl, '_blank');
+            
+            // Note: browser tidak bisa langsung mencari grup spesifik lalu mengetag, 
+            // jadi kita kirim ke nomor admin dengan format pesan yang sudah mencantumkan tag teks dan info grup.
+            console.log("Link Grup: https://chat.whatsapp.com/LWuZRg24VnZIrNBEYmcsUX");
+        }
+    </script>
+</body>
+</html>
